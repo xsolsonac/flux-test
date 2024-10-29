@@ -27,6 +27,7 @@ flux bootstrap github --help
 
 flux bootstrap github \
   --context=kind-k8s-localtest  \
+  --components-extra=image-reflector-controller,image-automation-controller \
   --token-auth  \
   --owner=$GITHUB_USER  \
   --repository=flux-test  \
@@ -35,4 +36,20 @@ flux bootstrap github \
   --personal
 ```
 
+Afegim el repositori on es troba l'aplicació a Flux, usem podinfo d'exemple
 
+```bash
+# Create a GitRepository manifest pointing to podinfo repository’s master branch:
+flux create source git podinfo \
+  --url=https://github.com/stefanprodan/podinfo \
+  --branch=master \
+  --interval=1m \
+  --export > ./clusters/dev/podinfo-source.yaml
+```
+
+Afegim també la kustomització i apliquem al k8s:
+
+```bash
+kubectl apply -f podinfo-source.yaml
+kubectl apply -f podinfo-kustomization.yaml
+```
