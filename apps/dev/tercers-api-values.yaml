@@ -1,0 +1,32 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tercers-api-release
+  namespace: sgi
+spec:
+  chart:
+    spec:
+      version: ">=1.0.0-alpha"
+  test:
+    enable: false
+  values:
+    # test
+    image:
+      repository: nginx
+      pullPolicy: Always
+      tag: latest
+    service:
+      internalPort: 80
+    # end test
+    extraEnvVariables:
+      - name: HERCULES_UDL_MI_DB_DRIVER
+        value: org.postgresql.Driver
+      - name: HERCULES_UDL_MI_DB_URL
+        value: jdbc:postgresql://sgi-postgresql-16:5432/udl_public
+      - name: HERCULES_UDL_MI_DB_USER
+        value: postgres
+      - name: HERCULES_UDL_MI_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: sgi-postgresql-16
+            key: postgres-password

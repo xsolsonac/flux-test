@@ -1,0 +1,17 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: tercers-api-repo
+  namespace: sgi
+spec:
+  secretRef:
+    name: hercules-udl-git-auth
+  interval: 1m
+  url: https://github.com/sicudl/hercules-udl-mi.git
+  ref:
+    branch: master
+  ignore: |
+    # exclude all
+    /*
+    # include charts directory
+    !/helm/

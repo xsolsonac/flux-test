@@ -222,3 +222,23 @@ kubectl describe helmrelease tercers-api-gitrepo
 # forcem reconcile per
 flux reconcile hr tercers-api-gitrepo -n default --with-source --force
 ```
+
+# Creació estructura monorepo per a gestionar configuracions dels diversos entorns
+
+* [Flux - Ways of structuring your repositories](https://fluxcd.io/flux/guides/repository-structure/)
+
+Estructura similar a la següent
+
+```bash
+├── apps
+│   ├── base
+│   ├── production
+│   └── staging
+├── infrastructure
+│   ├── base
+│   ├── production
+│   └── staging
+└── clusters
+    ├── production
+    └── staging
+```
