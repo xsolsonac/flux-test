@@ -1,0 +1,41 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: tercers-api
+  namespace: default
+spec:
+  interval: 1m
+  url: https://xsolsonac.github.io/tercers-api
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tercers-api
+  namespace: default
+spec:
+  interval: 5m
+  timeout: 2m
+  chart:
+    spec:
+      chart: hercules-udl-mi
+      version: '1.0.*'
+      sourceRef:
+        kind: HelmRepository
+        name: tercers-api
+      interval: 5m
+  releaseName: hercules-udl-mi
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  driftDetection:
+    mode: enabled
+    ignore:
+    - paths: ["/spec/replicas"]
+      target:
+        kind: Deployment
+  values:
+    replicaCount: 1

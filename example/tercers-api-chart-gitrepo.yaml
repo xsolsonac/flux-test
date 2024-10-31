@@ -1,0 +1,56 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: tercers-api-gitrepo
+  namespace: default
+spec:
+  secretRef:
+    name: hercules-udl-git-auth
+  interval: 1m
+  url: https://github.com/sicudl/hercules-udl-mi.git
+  ref:
+    branch: master
+  ignore: |
+    # exclude all
+    /*
+    # include charts directory
+    !/helm/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tercers-api-gitrepo
+  namespace: default
+spec:
+  interval: 5m
+  timeout: 2m
+  chart:
+    spec:
+      chart: helm/hercules-udl-mi
+      version: '1.0.*'
+      sourceRef:
+        kind: GitRepository
+        name: tercers-api-gitrepo
+      interval: 5m
+  releaseName: hercules-udl-mi
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  driftDetection:
+    mode: enabled
+    ignore:
+    - paths: ["/spec/replicas"]
+      target:
+        kind: Deployment
+  values:
+    replicaCount: 1
+#    image:
+#      repository: nginx
+#      pullPolicy: Always
+#      tag: latest
+#    service:
+#      internalPort: 80
